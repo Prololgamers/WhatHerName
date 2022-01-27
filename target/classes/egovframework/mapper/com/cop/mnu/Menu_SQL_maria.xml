@@ -1,0 +1,52 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="egovframework.bareun.cop.mnu.service.impl.MnuMapper">
+
+	
+	<!-- 게시판 전체 조회 -->
+	<select id="selectArticle" parameterType="brdVO" resultType="egovMap" >
+			
+			SELECT 
+					SEQ_NO, BOD_COD, TITLE, CONTENTS, FILE, 
+				 	FILE_NM, FILE_SIZE, WRT_ID, WRT_YMD,
+				 	MDFCN_YMD, RLS_YN, DEL_YN
+			FROM TB_CM_BOD
+			
+			<if test="bodCod != null and bodCod == 'free'"> <!-- 자유게시판 -->			
+				WHERE BOD_COD = #{bodCod}			
+			</if>
+			<if test="bodCod != null and bodCod == 'qna'"> <!-- QNA -->			
+				WHERE BOD_COD = #{bodCod}			
+			</if>
+			<if test="bodCod != null and bodCod == 'faq'"> <!-- FAQ -->			
+				WHERE BOD_COD = #{bodCod}			
+			</if>
+	</select>
+	
+	
+	
+	<!-- 게시글 작성 -->
+	<insert id="insertArticle" parameterType="brdVO">
+		
+		<selectKey keyProperty="seqNo" resultType="brdVO" order="BEFORE">
+			SELECT IFNULL(MAX(SEQ_NO)+1,1) AS seqNo FROM TB_CM_BOD
+		</selectKey>
+		 <![CDATA[
+		
+			INSERT INTO TB_CM_BOD
+			(
+			 SEQ_NO, BOD_COD, TITLE, CONTENTS, FILE, 
+			 FILE_NM, FILE_SIZE, WRT_ID, WRT_YMD,
+			 MDFCN_YMD, RLS_YN, DEL_YN
+			)
+			VALUES
+			( 
+			 #{seqNo}, #{bodCod}, #{title}, #{contents}, '', 
+			 '', '', 'USER',DATE_FORMAT(SYSDATE(), '%y-%m-%d'), 
+			 DATE_FORMAT(SYSDATE(), '%y-%m-%d'), 'y',''
+			)
+		 ]]>	
+	</insert>
+	
+
+</mapper>

@@ -1,0 +1,39 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans-4.0.xsd">
+
+	<!-- SqlSession setup for MyBatis Database Layer -->
+	<bean id="sqlSession" class="org.mybatis.spring.SqlSessionFactoryBean">
+		<property name="dataSource" ref="maria" />
+		<property name="configLocation" value="classpath:/egovframework/mapper/config/mapper-config.xml" />
+		<property name="mapperLocations">
+			<list>
+				<value>classpath:/egovframework/mapper/com/**/*_maria.xml</value>
+			</list>
+		</property>
+	</bean>
+
+	<!-- MapperConfigurer setup for MyBatis Database Layer with @Mapper("deptMapper") in DeptMapper Interface -->
+ 	<bean class="egovframework.rte.psl.dataaccess.mapper.MapperConfigurer">
+		<property name="basePackage" value="egovframework.bareun.sample.service.impl" />
+	</bean>
+	
+	
+	
+	<!-- DB 2개 연동 시 사용 -->
+	
+	<!-- SqlSession2 setup for MyBatis Database Layer -->
+	<!-- <bean id="sqlSession2" class="org.mybatis.spring.SqlSessionFactoryBean">
+		<property name="dataSource" ref="데이터소스에 추가한 빈 이름" />
+		<property name="configLocation" value="classpath:/egovframework/sqlmap/config/config파일 이름" />
+		<property name="mapperLocations" value="classpath:/egovframework/sqlmap/mappers/DB폴더 명/DB_sql.xml파일" />
+	</bean> -->
+	
+	<!-- MapperConfigurer setup for MyBatis Database Layer with @Mapper("deptMapper") in DeptMapper Interface -->
+	<!-- <bean id="DB_Scanner2" class="egovframework.rte.psl.dataaccess.mapper.MapperConfigurer">
+		<property name="basePackage" value="egovframework.bareun.sample.service.impl" />
+		<property name="sqlSessionFactoryBeanName" value="sqlSession2" />	
+		<property name="annotationClass" value="egovframework.bareun.sample.util.MapperScan"/>
+	</bean> -->
+    
+</beans>
