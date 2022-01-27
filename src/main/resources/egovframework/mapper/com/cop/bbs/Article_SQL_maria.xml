@@ -1,0 +1,90 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="egovframework.bareun.cop.bbs.service.impl.BrdMapper">
+
+	
+	<!-- 게시판 전체 조회 -->
+	<select id="selectArticle" parameterType="brdVO" resultType="egovMap" >
+			
+			SELECT 
+					SEQ_NO, BOD_COD, TITLE, CONTENTS, FILE, 
+				 	FILE_NM, FILE_SIZE, WRT_ID, WRT_YMD,
+				 	MDFCN_YMD, RLS_YN, DEL_YN
+			FROM TB_CM_BOD
+			
+			<if test="bodCod != null and bodCod == 'free'"> <!-- 자유게시판 -->			
+				WHERE BOD_COD = #{bodCod}			
+			</if>
+			<if test="bodCod != null and bodCod == 'qna'"> <!-- QNA -->			
+				WHERE BOD_COD = #{bodCod}			
+			</if>
+			<if test="bodCod != null and bodCod == 'faq'"> <!-- FAQ -->			
+				WHERE BOD_COD = #{bodCod}			
+			</if>
+	</select>
+	
+	<!-- 게시글 상세 조회 -->
+	<select id="selectOneArticle" parameterType="brdVO" resultType="egovMap">
+			
+			SELECT 
+					SEQ_NO, BOD_COD, TITLE, CONTENTS, FILE, 
+				 	FILE_NM, FILE_SIZE, WRT_ID, WRT_YMD,
+				 	MDFCN_YMD, RLS_YN, DEL_YN
+			
+			FROM TB_CM_BOD
+			
+			WHERE BOD_COD = #{bodCod} AND SEQ_NO = #{seqNo}
+			
+	</select>
+	
+	<!-- 게시글 작성 -->
+	<insert id="insertArticle" parameterType="brdVO">
+		
+		<selectKey keyProperty="seqNo" resultType="brdVO" order="BEFORE">
+			SELECT IFNULL(MAX(SEQ_NO)+1,1) AS seqNo FROM TB_CM_BOD
+		</selectKey>
+		 <![CDATA[
+		
+			INSERT INTO TB_CM_BOD
+			(
+			 SEQ_NO, BOD_COD, TITLE, CONTENTS, FILE, 
+			 FILE_NM, FILE_SIZE, WRT_ID, WRT_YMD,
+			 MDFCN_YMD, RLS_YN, DEL_YN
+			)
+			VALUES
+			( 
+			 #{seqNo}, #{bodCod}, #{title}, #{contents}, '', 
+			 '', '', 'USER',DATE_FORMAT(SYSDATE(), '%y-%m-%d'), 
+			 DATE_FORMAT(SYSDATE(), '%y-%m-%d'), 'y',''
+			)
+		 ]]>
+			<!-- INSERT INTO TB_CM_BOD
+			(SEQ_NO, BOD_COD, TITLE, CONTENTS, FILE, 
+			 FILE_NM, FILE_SIZE, WRT_ID, WRT_YMD,
+			 MDFCN_YMD, RLS_YN, DEL_YN
+			)
+			VALUES
+			( #{seqNo}, #{bodCod},#{title}, #{contents}
+			  #{file}, #{fileNm}, #{fileSize}, #{wrtId},
+			  DATE_FORMAT(SYSDATE(), '%y-%m-%d'), DATE_FORMAT(SYSDATE(), '%y-%m-%d'), 
+			  "y", ""
+			) -->
+		
+	</insert>
+	<!-- 오라클 테이블에 값 INSERT 해놓고 이미지 파일만 넣을 예정 -->
+	<update id="updateArticle" parameterType="brdVO">
+
+			UPDATE TB_CM_BOD
+			
+			SET 
+			 	BOD_COD=#{bodCod}, TITLE = #{title}, CONTENTS = #{contents}, FILE = #{file}, 
+			 	FILE_NM = #{fileNm}, FILE_SIZE=#{fileSize}, WRT_ID = #{wrtId}, WRT_YMD = #{wrtYmd},
+			 	MDFCN_YMD = #{mdfcnYmd}, RLS_YN = #{rlsYn}, DEL_YN = #{delYn}
+				
+				
+			WHERE SEQ_NO= #{seqNo}
+
+	</update>
+	
+
+</mapper>
